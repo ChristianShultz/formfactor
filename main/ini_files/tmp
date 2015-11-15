@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- ROWS ARE 1-based -->
+<Props>
+  <left>
+    <origin>J0m</origin>
+    <data>A1</data>
+    <mass>0.3683</mass>
+    <row>1</row>
+    <mom>0 0 0</mom>
+  </left>
+  <gamma>
+    <origin>J1m</origin>
+    <data>H0D2A1</data>
+    <mass>0.</mass>
+    <row>1</row>
+    <mom>0 1 -1</mom>
+  </gamma>
+  <right>
+    <origin>J0m</origin>
+    <data>H0D2A2</data>
+    <mass>0.1483</mass>
+    <row>1</row>
+    <mom>0 -1 1</mom>
+  </right>
+  <tran>tran</tran>
+  <mom_fac>0.11</mom_fac>
+</Props>
+
+

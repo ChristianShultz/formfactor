@@ -1,0 +1,22 @@
+#ifndef FF_H
+#define FF_H
+#include "ff.h"
+#include "formfactor_abs_base_cfg.h"
+#include "formfactor_utils.h"
+#include "lorentzff_canonical_cont_spin_formfactors.h"
+#include "lorentzff_canonical_frame_formfacs_rotation_manager.h"
+#include "lorentzff_canonical_JJlist_ff.h"
+#include "lorentzff_canonical_PiPi.h"
+#include "lorentzff_canonical_PiPiStar.h"
+#include "lorentzff_canonical_PiRho.h"
+#include "lorentzff_canonical_RhoPi.h"
+#include "lorentzff_canonical_RhoRho.h"
+#include "lorentzff_canonical_rotations_checker.h"
+#include "lorentzff_cubic_reps.h"
+#include "lorentzff_formfactor_abs_base_cfg.h"
+#include "lorentzff_formfactor_factory.h"
+#include "lorentzff_formfac_utils.h"
+#include "lorentzff_polarization_embedding.h"
+#include "lorentzff_polarization_embedding_old.h"
+#include "lorentzff_polarization_tensors.h"
+#endif

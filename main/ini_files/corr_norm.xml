@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<Props>
+
+  <dbProps>
+
+    <threePointDatabase>
+      <dbname>/Users/shultz/jlab/database/szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per/three_point_smeared/n64/rho_pi_omega_ins/data/db/szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per.n64.rho_pi.tins0_31.omegalInsertion.3pt</dbname>
+      <badlist>bad_corrs.xml</badlist>
+    </threePointDatabase>
+    <normalizationDatabase>
+      <dbname>/Users/shultz/jlab/database/szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per/meson_2pt/redstar/isovector/mass_overlaps/mass_overlaps.sdb</dbname>
+      <badlist>bad_norms.xml</badlist>
+    </normalizationDatabase>
+
+    <!-- is the overlap for Z* the same as for Z (did we do the full rephasing?) -->
+    <allow_daggering>true</allow_daggering>
+
+    <!-- do all the rows in a given irrep have the same values for Z and E (they better)-->
+    <!-- this also applies to all momenta related by an allowed lattice rotation (the star of p ) -->
+    <LG_symmetry>true</LG_symmetry>
+
+
+  </dbProps>
+
+  <npoint>
+
+    <elem>
+      <NPoint>
+        <elem>
+          <t_slice>28</t_slice>
+          <Irrep>
+            <CGs>
+            </CGs>
+            <Operators>
+              <elem>
+                <name>rho_proj0_p000_T1</name>
+                <smear></smear>
+                <mom_type>0 0 0</mom_type>
+              </elem>
+            </Operators>
+            <creation_op>false</creation_op>
+            <smearedP>true</smearedP>
+            <mom>0 0 0</mom>
+            <row>3</row>
+            <twoI_z>2</twoI_z>
+          </Irrep>
+        </elem>
+        <elem>
+          <t_slice>-3</t_slice>
+          <Irrep>
+            <CGs>
+            </CGs>
+            <Operators>
+              <elem>
+                <name>omegal_rhoxD0_J0__J1_T1</name>
+                <smear></smear>
+                <mom_type>0 0 0</mom_type>
+              </elem>
+            </Operators>
+            <creation_op>true</creation_op>
+            <smearedP>true</smearedP>
+            <mom>0 0 0</mom>
+            <row>3</row>
+            <twoI_z>0</twoI_z>
+          </Irrep>
+        </elem>
+        <elem>
+          <t_slice>0</t_slice>
+          <Irrep>
+            <CGs>
+            </CGs>
+            <Operators>
+              <elem>
+                <name>pion_proj0_p000_A1</name>
+                <smear></smear>
+                <mom_type>0 0 0</mom_type>
+              </elem>
+            </Operators>
+            <creation_op>true</creation_op>
+            <smearedP>true</smearedP>
+            <mom>0 0 0</mom>
+            <row>1</row>
+            <twoI_z>2</twoI_z>
+          </Irrep>
+        </elem>
+      </NPoint>
+      <ensemble>szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per</ensemble>
+    </elem>
+
+
+  </npoint>
+
+  <source>pion</source>
+  <sink>rho</sink>
+
+</Props>

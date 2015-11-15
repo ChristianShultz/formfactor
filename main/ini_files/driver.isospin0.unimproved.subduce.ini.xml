@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<DriverProps>
+
+  <version>3</version>
+
+
+  <!-- control the fiting across t_ins -->
+
+  <threePointComparatorProps>
+    <fit_type>const</fit_type>                        <!-- more options in jackfitter, threepoint_something.h -->
+    <baseProp>CompareFitsByChisqPerNDoF</baseProp>    <!-- basic fit comparator -->
+    <biasProp>none</biasProp>                         <!-- add some bias function to the comparator as a function of fit range (try to bias toward middle?) -->
+    <extraProps>                                      <!-- multiply extra bits on the comparator - ie smaller errors on the constant etc -->
+    </extraProps>                                       
+    <tlow>1</tlow>                                    <!-- fit range, should be less than or equal to correlator length --> 
+    <thigh>27</thigh>
+    <minTSlice>7</minTSlice>
+  </threePointComparatorProps>
+
+
+  <!-- specify enough about the source and sink so radmat can make redstar xml --> 
+
+  <threePointIni> 
+    <threePointCorrXMLIni>
+
+      <redstar>
+
+        <object_name>RedstarThreePointXMLSubduceHandler</object_name>
+        <param>
+          <ensemble>szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per</ensemble>
+          <npt>
+            <elem>
+              <object_name>RedstarSingleParticleMesonXML</object_name>
+              <param>
+                <cont_rep>J0m</cont_rep>
+                <H></H>
+                <!-- do we want to consider all the 
+                rotations of the provided momentum -->
+                <fill_star>true</fill_star>    
+                <mom>
+                  <elem>0 0 0</elem>
+                  <elem>1 0 0</elem>
+                  <elem>1 1 0</elem>
+                  <elem>1 1 1</elem>
+                  <elem>2 0 0</elem>
+                </mom>
+                <twoI_z>2</twoI_z>
+                <name>pion_proj0</name>
+                <creation_op>false</creation_op>
+                <smearedP>true</smearedP>
+                <isProjected>true</isProjected>
+                <t_slice>28</t_slice>
+              </param>
+            </elem>
+            <elem>
+              <object_name>RedstarVectorCurrentXML</object_name>
+              <param>
+                <!-- integer momentum cuts -->
+                <pmin>0</pmin>
+                <pmax>4</pmax>
+                <t_slice>-3</t_slice>
+
+                <time>
+                  <active>true</active>               <!-- on or off -->
+                  <photons>
+                    <elem> 
+                      <coeff_r>0.23570</coeff_r> <!-- 1/3 * 1/sqrt(2) -->
+                      <coeff_i>0</coeff_i>
+                      <name>hl_b0xD0_J0__J0</name>
+                    </elem>            
+                  </photons>
+                  <creation_op>true</creation_op>
+                  <smearedP>false</smearedP>
+                </time>
+
+                <space>
+                  <active>false</active>               <!-- on or off -->
+                  <photons>
+                    <elem> 
+                      <coeff_r>0.23570</coeff_r> <!-- 1/3 * 1/sqrt(2) -->
+                      <coeff_i>0</coeff_i>
+                      <name>omegal_rhoxD0_J0__J1</name>
+                    </elem>            
+                  </photons>
+                  <creation_op>true</creation_op>
+                  <smearedP>false</smearedP>
+                </space>
+
+              </param>
+            </elem>
+            <elem>
+              <object_name>RedstarSingleParticleMesonXML</object_name>
+              <param>
+                <cont_rep>J1m</cont_rep>
+                <H></H>
+                <!-- do we want to consider all the 
+                rotations of the provided momentum -->
+                <fill_star>true</fill_star>    
+                <mom>
+                  <elem>0 0 0</elem>
+                  <elem>1 0 0</elem>
+                  <elem>1 1 0</elem>
+                  <elem>1 1 1</elem>
+                  <elem>2 0 0</elem>
+                </mom>
+                <twoI_z>2</twoI_z>
+                <name>rho_proj0</name>
+                <creation_op>true</creation_op>
+                <smearedP>true</smearedP>
+                <isProjected>true</isProjected>
+                <t_slice>0</t_slice>
+              </param>
+            </elem>
+          </npt>
+        </param>
+
+      </redstar>
+
+      <renormalization>
+        <RGE_prop>4</RGE_prop>
+        <Z_t>1.039362</Z_t>
+        <Z_s>1.159378</Z_s> 
+      </renormalization>
+
+      <sink_id>pion_proj0</sink_id>
+      <maSink>0.1483</maSink>
+
+      <source_id>rho_proj0</source_id>
+      <maSource>0.2161</maSource>
+
+    </threePointCorrXMLIni>
+
+
+    <!-- ingredient list --> 
+
+    <radmatDBProp>
+      <threePointDatabase>
+        <dbname>
+          <elem>szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per.qq_0-4.corr2.dt28.sdb</elem>
+        </dbname>
+        <badlist>bad_corrs.xml</badlist>
+      </threePointDatabase>
+      <normalizationDatabase>
+        <dbname>
+          <elem>/u/home/shultz/optimized_operators/szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per/norms.szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per.sdb</elem>
+          </dbname>
+        <badlist>bad_norms.xml</badlist>
+      </normalizationDatabase>
+
+      <!-- is the overlap for Z* the same as for Z (did we do the full rephasing?) -->
+      <allow_daggering>true</allow_daggering>
+
+      <!-- do all the rows in a given irrep have the same values for Z and E (they better)-->
+      <!-- this also applies to all momenta related by an allowed lattice rotation (the star of p ) -->
+      <LG_symmetry>true</LG_symmetry>
+    </radmatDBProp>
+
+    <matElemMode>mix_irreps</matElemMode>
+    <matElemID>J0mJ1m_tran</matElemID>
+
+    <!-- anisotropy --> 
+
+    <xi>3.45</xi>
+
+    <!-- spatial extent in integer --> 
+
+    <L_s>16</L_s>
+  </threePointIni>
+
+  <chisq>none</chisq>
+
+  <maxThread>10</maxThread>
+
+  <!-- energy of lightest vector or branch cut from two pions -->
+  <poleMass>0.216166</poleMass>
+
+  <tolerance>1e-6</tolerance>
+
+</DriverProps>

@@ -1,0 +1,891 @@
+4a5
+> #include "lorentzff_canonical_frame_formfactor.h"
+9d9
+< #include "radmat/utils/stringify.h"
+12,14d11
+< #include <complex>
+< 
+< // #define PRINT_RR_DECOMP
+18a16,23
+>   namespace RhoRho
+>   {
+> 
+>     // PRD 73, 074507 (2006) 
+>     //
+> 
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+20,21c25,31
+<   // PRD 73, 074507 (2006) 
+<   //
+---
+>     struct G1impl
+>       : public FormFacRotationManager<G1impl, std::complex<double> >,
+>       public leftSpinPTensor<1> , 
+>       public rightSpinPTensor<1>
+>     {
+>       typedef std::complex<double> Data_t;
+>       virtual ~G1impl() {}
+23,24c33,59
+<   //////////////////////////////////////////////////////////////////
+<   //////////////////////////////////////////////////////////////////
+---
+>       virtual std::string
+>         ff_impl() const
+>         {
+>           return "-G_1(Q^2)(p_f + p_i)^\\mu \\epsilon^*_\\nu(p_f,\\lambda_f)\\epsilon^\\nu(p_i,\\lambda_i) \\\\";
+>         }
+> 
+>       virtual Tensor<std::complex<double> , 1> 
+>         impl(const Tensor<double,1> &p_f, 
+>             const Tensor<double,1> &p_i, 
+>             const double mom_fac,
+>             const int lh,
+>             const int rh)  const
+>         {
+>           Tensor<std::complex<double> , 1> ret( (TensorShape<1>())[4], std::complex<double>(0.,0.)); 
+>           Tensor<std::complex<double> , 1> eps_left, eps_right; 
+>           eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+>           eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+>           Tensor<std::complex<double>,0> val; 
+>           Tensor<std::complex<double>,2> metric; 
+>           metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+>           val = contract(eps_left,applyMetric(eps_right,metric,0),0,0); 
+> 
+>           ret = convertTensorUnderlyingType<std::complex<double>, double,1>(p_f + p_i); 
+>         
+>           return -( val.value() * ret ); 
+>         }
+>     };
+26,27c61,65
+<   struct RhoRhoG1; 
+<   REGISTER_STRINGIFY_TYPE( RhoRhoG1 ); 
+---
+>     template<int lambda_left, int lambda_right>
+>       struct G1 : public canonicalFrameFormFactor<1,1,lambda_left,lambda_right, G1impl , true>
+>     {
+>       virtual ~G1() {}
+>     };
+30,31c68,70
+<   struct RhoRhoG1
+<     : public FormFacRotationManager<RhoRhoG1, std::complex<double> , 1, 1>,
+---
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+>     struct G2impl : public FormFacRotationManager<G2impl, std::complex<double> >,
+34,42c73,111
+<   {
+<     typedef std::complex<double> Data_t;
+<     virtual ~RhoRhoG1() {}
+< 
+<     virtual std::string
+<       ff_impl() const
+<       {
+<         return "-G_1(Q^2)(p_f + p_i)^\\mu \\epsilon^*_\\nu(p_f,\\lambda_f)\\epsilon^\\nu(p_i,\\lambda_i) \\\\";
+<       }
+---
+>     {
+>       typedef std::complex<double> Data_t;
+>       virtual ~G2impl() {}
+>       virtual std::string 
+>         ff_impl() const
+>         {
+>           std::string s = "G_2(Q^2)\\left[ \\epsilon^\\mu(p_i,\\lambda_i)\\epsilon^*_\\nu(p_f,\\lambda_f)p_i^\\nu";
+>           s += "+ \\epsilon^{*\\mu}(p_f,\\lambda_f)\\epsilon_\\nu(p_i,\\lambda_i)p_f^\\nu \\right] \\\\";
+>           return s;
+>         }
+> 
+>       virtual Tensor<std::complex<double> , 1> 
+>         impl(const Tensor<double,1> &p_f, 
+>             const Tensor<double,1> &p_i, 
+>             const double mom_fac,
+>             const int lh, 
+>             const int rh)  const
+>         {
+>           Tensor<std::complex<double> , 1> ret( (TensorShape<1>())[4], std::complex<double>(0.,0.)); 
+>           Tensor<std::complex<double> , 1> p_left,p_right; 
+>           Tensor<std::complex<double> , 1> eps_left, eps_right; 
+>           Tensor<std::complex<double> , 0> val_a, val_b; 
+>           Tensor<std::complex<double> , 2> metric; 
+>           metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+>           eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+>           eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+>           p_left = convertTensorUnderlyingType< Data_t , double , 1>(p_f); 
+>           p_right = convertTensorUnderlyingType< Data_t , double , 1>(p_i); 
+>           val_a = contract(eps_left, applyMetric(p_right,metric,0),0,0);  
+>           val_b = contract(eps_right, applyMetric(p_left,metric,0),0,0);  
+> 
+> #if 0 
+>           std::cout << __func__ << ": pleft = " << p_left 
+>             << " pright = " << p_right 
+>             << " epsl = " << eps_left 
+>             << " epsr = " << eps_right 
+>             << " el.pr = " << val_a.value() << "     er.pl = " << val_b.value() 
+>             << std::endl;  
+> #endif 
+44,64c113
+<     virtual Tensor<std::complex<double> , 1> 
+<       impl(const Tensor<double,1> &p_f, 
+<           const Tensor<double,1> &p_i, 
+<           const double mom_fac,
+<           const int lh,
+<           const int rh)  const
+<       {
+<         Tensor<std::complex<double> , 1> ret( (TensorShape<1>())[4], std::complex<double>(0.,0.)); 
+<         Tensor<std::complex<double> , 1> eps_left, eps_right; 
+<         eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+<         eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+<         Tensor<std::complex<double>,0> val; 
+<         Tensor<std::complex<double>,2> metric; 
+<         metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+<         val = contract(eps_left,applyMetric(eps_right,metric,0),0,0); 
+< 
+<         ret = convertTensorUnderlyingType<std::complex<double>, double,1>(p_f + p_i); 
+< 
+< #ifdef PRINT_RR_DECOMP
+<       //  std::cout << "RRG1:" << " val " << val.value() << " pp " << ret << std::endl; 
+< #endif
+---
+>           ret = val_a.value() * eps_right + val_b.value() * eps_left; 
+66,68c115,117
+<         return -( val.value() * ret ); 
+<       }
+<   };
+---
+>           return ret; 
+>         }
+>     };
+70,71d118
+<   //////////////////////////////////////////////////////////////////
+<   //////////////////////////////////////////////////////////////////
+73,74c120,124
+<   struct RhoRhoG2; 
+<   REGISTER_STRINGIFY_TYPE( RhoRhoG2 ); 
+---
+>     template<int lambda_left, int lambda_right>
+>       struct G2 : public canonicalFrameFormFactor<1,1,lambda_left,lambda_right, G2impl , true>
+>     {
+>       virtual ~G2() {}
+>     };
+76,77c126,128
+<   struct RhoRhoG2 
+<     : public FormFacRotationManager<RhoRhoG2, std::complex<double> , 1 , 1>,
+---
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+>     struct G3impl : public FormFacRotationManager<G3impl, std::complex<double> >,
+80,84c131,179
+<   {
+<     typedef std::complex<double> Data_t;
+<     virtual ~RhoRhoG2() {}
+<     virtual std::string 
+<       ff_impl() const
+---
+>     {
+>       typedef std::complex<double> Data_t;
+>       virtual ~G3impl() {}
+>       virtual std::string
+>         ff_impl() const
+>         {
+>           std::string s =  "-\\frac{G_3(Q^2)}{2m_v^2}(p_f + p_i)^\\mu";
+>           s += " \\epsilon^*_\\nu(p_f,\\lambda_f)p_i^\\nu";
+>           s += " \\epsilon_\\alpha(p_i,\\lambda_f)p_f^\\alpha \\\\ ";
+>           return s; 
+>         }
+>       virtual Tensor<std::complex<double> , 1> 
+>         impl(const Tensor<double,1> &p_f, 
+>             const Tensor<double,1> &p_i, 
+>             const double mom_fac,
+>             const int lh,
+>             const int rh)  const
+>         {
+>           Tensor<std::complex<double> , 1> ret( (TensorShape<1>())[4], std::complex<double>(0.,0.)); 
+>           Tensor<std::complex<double> , 1> p_left,p_right; 
+>           Tensor<std::complex<double> , 1> eps_left, eps_right; 
+>           Tensor<std::complex<double> , 0> val_a, val_b, mass; 
+>           Tensor<std::complex<double> , 2> metric; 
+>           metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+>           eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+>           eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+>           p_left = convertTensorUnderlyingType< Data_t , double , 1>(p_f); 
+>           p_right = convertTensorUnderlyingType< Data_t , double , 1>(p_i); 
+>           val_a = contract(eps_left, applyMetric(p_right,metric,0),0,0);  
+>           val_b = contract(eps_right, applyMetric(p_left,metric,0),0,0);  
+>           mass = contract(p_right, applyMetric(p_right,metric,0),0,0); 
+> 
+>           ret = convertTensorUnderlyingType<std::complex<double>, double,1>(p_f + p_i); 
+>           // return - val_a.value() * val_b.value() * ret;
+>           return  - ( (val_a.value() * val_b.value() ) / (2.*mass.value()) ) * ret; 
+>         }
+>     };
+> 
+>     template<int lambda_left, int lambda_right>
+>       struct G3 : public canonicalFrameFormFactor<1,1,lambda_left,lambda_right,G3impl,true>
+>     {
+>       virtual ~G3() {}
+>     };
+> 
+> 
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+>     template<int lambda_left, int lambda_right> 
+>       ffBase_t<std::complex<double> >::ff_list genList(void)
+86,88c181,204
+<         std::string s = "G_2(Q^2)\\left[ \\epsilon^\\mu(p_i,\\lambda_i)\\epsilon^*_\\nu(p_f,\\lambda_f)p_i^\\nu";
+<         s += "+ \\epsilon^{*\\mu}(p_f,\\lambda_f)\\epsilon_\\nu(p_i,\\lambda_i)p_f^\\nu \\right] \\\\";
+<         return s;
+---
+>         ffBase_t<std::complex<double> >::ff_list retRhoRho; 
+>         ffBase_t<std::complex<double> >::BBType *g1 , *g2, *g3; 
+> 
+>         try
+>         {
+>           g1 = new radmat::RhoRho::G1<lambda_left,lambda_right>();
+>           g2 = new radmat::RhoRho::G2<lambda_left,lambda_right>();
+>           g3 = new radmat::RhoRho::G3<lambda_left,lambda_right>();
+> 
+>           // POW2_ASSERT(g1 && g2 && g3);
+>           POW2_ASSERT( g1 );
+>           POW2_ASSERT( g2 );
+>           POW2_ASSERT( g3 );
+> 
+>           retRhoRho.push_back(ffBase_t<std::complex<double> >::BBHandle_t(g1)); 
+>           retRhoRho.push_back(ffBase_t<std::complex<double> >::BBHandle_t(g2)); 
+>           retRhoRho.push_back(ffBase_t<std::complex<double> >::BBHandle_t(g3)); 
+>         }
+>         catch(...)
+>         {
+>           POW2_ASSERT(false); 
+>         } 
+> 
+>         return retRhoRho;
+91,118d206
+<     virtual Tensor<std::complex<double> , 1> 
+<       impl(const Tensor<double,1> &p_f, 
+<           const Tensor<double,1> &p_i, 
+<           const double mom_fac,
+<           const int lh, 
+<           const int rh)  const
+<       {
+<         Tensor<std::complex<double> , 1> ret( (TensorShape<1>())[4], std::complex<double>(0.,0.)); 
+<         Tensor<std::complex<double> , 1> p_left,p_right; 
+<         Tensor<std::complex<double> , 1> eps_left, eps_right; 
+<         Tensor<std::complex<double> , 0> val_a, val_b; 
+<         Tensor<std::complex<double> , 2> metric; 
+<         metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+<         eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+<         eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+<         p_left = convertTensorUnderlyingType< Data_t , double , 1>(p_f); 
+<         p_right = convertTensorUnderlyingType< Data_t , double , 1>(p_i); 
+<         val_a = contract(eps_left, applyMetric(p_right,metric,0),0,0);  
+<         val_b = contract(eps_right, applyMetric(p_left,metric,0),0,0);  
+< 
+< #ifdef PRINT_RR_DECOMP
+<       //  std::cout << "RRG2:" << ": pleft = " << p_left 
+<       //    << " pright = " << p_right 
+<       //    << " epsl = " << eps_left 
+<       //    << " epsr = " << eps_right 
+<       //    << " el.pr = " << val_a.value() << "     er.pl = " << val_b.value() 
+<       //    << std::endl;  
+< #endif 
+120c208,215
+<         ret = val_a.value() * eps_right + val_b.value() * eps_left; 
+---
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+>     template<int lambda_left, int lambda_right>
+>       struct RhoRho : public ffBase_t<std::complex<double> >
+>     {
+>       RhoRho(void)
+>         : ffBase_t<std::complex<double> >(radmat::RhoRho::genList<lambda_left,lambda_right>())
+>       { }
+122c217,222
+<         return ret; 
+---
+>       RhoRho& operator=(const RhoRho &o)
+>       {
+>         if (this != &o)
+>           ffBase_t<std::complex<double> >::operator=(o);
+> 
+>         return *this; 
+124d223
+<   };
+125a225,227
+>       RhoRho(const RhoRho &o)
+>         : ffBase_t<std::complex<double> >(o)
+>       {  }
+127,128c229,232
+<   //////////////////////////////////////////////////////////////////
+<   //////////////////////////////////////////////////////////////////
+---
+>       private: 
+>       RhoRho(const ffBase_t<std::complex<double> >::ff_list &); 
+>       RhoRho(const ffBase_t<std::complex<double> >::ff_list ); 
+>     };
+130,131c234
+<   struct RhoRhoG3; 
+<   REGISTER_STRINGIFY_TYPE(RhoRhoG3); 
+---
+>   } // namespace RhoRho
+133,136c236,239
+<   struct RhoRhoG3 
+<     : public FormFacRotationManager<RhoRhoG3, std::complex<double> , 1, 1>,
+<     public leftSpinPTensor<1> , 
+<     public rightSpinPTensor<1>
+---
+> 
+> #if 0 
+> 
+>   namespace CRhoRho
+138,178d240
+<     typedef std::complex<double> Data_t;
+<     virtual ~RhoRhoG3() {}
+<     virtual std::string
+<       ff_impl() const
+<       {
+<         std::string s =  "-\\frac{G_3(Q^2)}{2m_v^2}(p_f + p_i)^\\mu";
+<         s += " \\epsilon^*_\\nu(p_f,\\lambda_f)p_i^\\nu";
+<         s += " \\epsilon_\\alpha(p_i,\\lambda_f)p_f^\\alpha \\\\ ";
+<         return s; 
+<       }
+<     virtual Tensor<std::complex<double> , 1> 
+<       impl(const Tensor<double,1> &p_f, 
+<           const Tensor<double,1> &p_i, 
+<           const double mom_fac,
+<           const int lh,
+<           const int rh)  const
+<       {
+<         Tensor<std::complex<double> , 1> ret( (TensorShape<1>())[4], std::complex<double>(0.,0.)); 
+<         Tensor<std::complex<double> , 1> p_left,p_right; 
+<         Tensor<std::complex<double> , 1> eps_left, eps_right; 
+<         Tensor<std::complex<double> , 0> val_a, val_b, mass; 
+<         Tensor<std::complex<double> , 2> metric; 
+<         metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+<         eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+<         eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+<         p_left = convertTensorUnderlyingType< Data_t , double , 1>(p_f); 
+<         p_right = convertTensorUnderlyingType< Data_t , double , 1>(p_i); 
+<         val_a = contract(eps_left, applyMetric(p_right,metric,0),0,0);  
+<         val_b = contract(eps_right, applyMetric(p_left,metric,0),0,0);  
+<         mass = contract(p_right, applyMetric(p_right,metric,0),0,0); 
+< 
+<         ret = convertTensorUnderlyingType<std::complex<double>, double,1>(p_f + p_i); 
+< 
+< #ifdef PRINT_RR_DECOMP
+<         std::cout << "RRG3:" << " lh " << lh << " rh " << rh << std::endl;
+<         std::cout << "pl " << p_f 
+<           << " pr " << p_i 
+<           << " eps_left " << eps_left 
+<           << " eps_r " << eps_right 
+<           << " pp " << ret << std::endl; 
+< #endif 
+180,183c242,246
+<         // return - val_a.value() * val_b.value() * ret;
+<         return  - ( (val_a.value() * val_b.value() ) / (2.*mass.value()) ) * ret; 
+<       }
+<   };
+---
+>     // alternate derivation
+>     //
+> 
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+184a248,342
+>     struct Apimpl
+>       : public FormFacRotationManager<Apimpl, std::complex<double> >,
+>       public leftSpinPTensor<1> , 
+>       public rightSpinPTensor<1>
+>     {
+>       typedef std::complex<double> Data_t;
+>       virtual ~Apimpl() {}
+> 
+>       virtual std::string
+>         ff_impl() const
+>         {
+>           return "A_+(Q^2)(p_f + p_i)^\\mu \\epsilon^*_\\nu(p_f,\\lambda_f)\\epsilon^\\nu(p_i,\\lambda_i) \\\\";
+>         }
+> 
+>       virtual Tensor<std::complex<double> , 1> 
+>         impl(const Tensor<double,1> &p_f, 
+>             const Tensor<double,1> &p_i, 
+>             const double mom_fac,
+>             const int lh,
+>             const int rh)  const
+>         {
+>           Tensor<std::complex<double> , 1> ret( (TensorShape<1>())[4], std::complex<double>(0.,0.)); 
+>           Tensor<std::complex<double> , 1> eps_left, eps_right; 
+>           eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+>           eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+>           Tensor<std::complex<double>,0> val; 
+>           Tensor<std::complex<double>,2> metric; 
+>           metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+>           val = contract(eps_left,applyMetric(eps_right,metric,0),0,0); 
+> 
+>           ret = convertTensorUnderlyingType<std::complex<double>, double,1>(p_f + p_i); 
+> 
+>           return  val.value() * ret ; 
+>         }
+>     };
+> 
+>     template<int lambda_left, int lambda_right>
+>       struct Ap : public canonicalFrameFormFactor<1,1,lambda_left,lambda_right, Apimpl,true >
+>     {
+>       virtual ~Ap() {}
+>     };
+> 
+> 
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+>     struct Bpimpl : public FormFacRotationManager<Bpimpl, std::complex<double> >,
+>     public leftSpinPTensor<1> , 
+>     public rightSpinPTensor<1>
+>     {
+>       typedef std::complex<double> Data_t;
+>       virtual ~Bpimpl() {}
+>       virtual std::string 
+>         ff_impl() const
+>         {
+>           std::string s = "B_+(Q^2)\\left[ \\epsilon^\\mu(p_i,\\lambda_i)\\epsilon^*_\\nu(p_f,\\lambda_f)p_i^\\nu";
+>           s += "+ \\epsilon^{*\\mu}(p_f,\\lambda_f)\\epsilon_\\nu(p_i,\\lambda_i)p_f^\\nu \\right] \\\\";
+>           return s;
+>         }
+> 
+>       virtual Tensor<std::complex<double> , 1> 
+>         impl(const Tensor<double,1> &p_f, 
+>             const Tensor<double,1> &p_i, 
+>             const double mom_fac,
+>             const int lh, 
+>             const int rh)  const
+>         {
+>           Tensor<std::complex<double> , 1> ret( (TensorShape<1>())[4], std::complex<double>(0.,0.)); 
+>           Tensor<std::complex<double> , 1> p_left,p_right; 
+>           Tensor<std::complex<double> , 1> eps_left, eps_right; 
+>           Tensor<std::complex<double> , 0> eldpr,erdpl; 
+>           Tensor<std::complex<double> , 2> metric; 
+>           metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+>           eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+>           eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+>           p_left = convertTensorUnderlyingType< Data_t , double , 1>(p_f); 
+>           p_right = convertTensorUnderlyingType< Data_t , double , 1>(p_i); 
+>           eldpr = contract(eps_left, applyMetric(p_right,metric,0),0,0);  
+>           erdpl = contract(eps_right, applyMetric(p_left,metric,0),0,0);  
+> 
+>           if (false ) 
+>           {
+>             std::cout << "el " << eps_left 
+>               << "er " << eps_right 
+>               << "pl " << p_left 
+>               << "pr " << p_right 
+>               << "el.pr " << val_a.value() 
+>               << "\ner.pl " << val_b.value()
+>               << std::endl;
+>           }
+> 
+>           ret = eldpr.value() * eps_right + erdpl.value() * eps_left; 
+> 
+>           return ret; 
+>         }
+>     };
+186a345,349
+>     template<int lambda_left, int lambda_right>
+>       struct Bp : public canonicalFrameFormFactor<1,1,lambda_left,lambda_right, Bpimpl, true >
+>     {
+>       virtual ~Bp() {}
+>     };
+188,189c351,403
+<   //////////////////////////////////////////////////////////////////
+<   //////////////////////////////////////////////////////////////////
+---
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+>     struct Bmimpl : public FormFacRotationManager<Bmimpl, std::complex<double> >,
+>     public leftSpinPTensor<1> , 
+>     public rightSpinPTensor<1>
+>     {
+>       typedef std::complex<double> Data_t;
+>       virtual ~Bmimpl() {}
+>       virtual std::string
+>         ff_impl() const
+>         {
+>           std::string s =  "stub";
+>           return s; 
+>         }
+>       virtual Tensor<std::complex<double> , 1> 
+>         impl(const Tensor<double,1> &p_f, 
+>             const Tensor<double,1> &p_i, 
+>             const double mom_fac,
+>             const int lh,
+>             const int rh)  const
+>         {
+>           Tensor<std::complex<double> , 1> ret,t1,t2,t3; 
+>           Tensor<std::complex<double> , 1> p_left,p_right; 
+>           Tensor<std::complex<double> , 1> eps_left, eps_right; 
+>           Tensor<std::complex<double> , 0> eldpr,erdpl,mass,dot; 
+>           Tensor<std::complex<double> , 2> metric; 
+>           metric = convertTensorUnderlyingType<std::complex<double>,double,2>(g_dd()); 
+>           eps_left = left_p_tensor(p_f,p_i,mom_fac,lh);
+>           eps_right = right_p_tensor(p_f,p_i,mom_fac,rh);
+>           p_left = convertTensorUnderlyingType< Data_t , double , 1>(p_f); 
+>           p_right = convertTensorUnderlyingType< Data_t , double , 1>(p_i); 
+>           eldpr = contract(eps_left, applyMetric(p_right,metric,0),0,0);  
+>           erdpl = contract(eps_right, applyMetric(p_left,metric,0),0,0);  
+>           mass = contract(p_right, applyMetric(p_right,metric,0),0,0); 
+>           dot = contract(p_left, applyMetric(p_right,metric,0),0,0); 
+> 
+>           std::complex<double> coeff; 
+> 
+>           // avoid nan
+>           if( std::norm( mass.value()  - dot.value() ) > 1e-6 ) 
+>             coeff = ( eldpr.value() * erdpl.value() ) /  ( mass.value() - dot.value() ) ; 
+>           else
+>             coeff = std::complex<double>(0.,0.); 
+> 
+>           t1 = eldpr.value() * eps_right; 
+>           t2 = erdpl.value() * eps_left;
+>           t3 = coeff *  convertTensorUnderlyingType<std::complex<double>, double,1>(p_f - p_i); 
+> 
+>           ret = t1 - t2 - t3; 
+> 
+>           return ret ; 
+>         }
+>     };
+191,192c405,406
+<   template<int embedl, int embedr>
+<     LorentzFFAbsBase_t::LorentzFFAbs_list RhoRhoGenList()
+---
+>     template<int lambda_left, int lambda_right>
+>       struct Bm : public canonicalFrameFormFactor<1,1,lambda_left,lambda_right,Bmimpl,true>
+194,195c408,409
+<       LorentzFFAbsBase_t::LorentzFFAbs_list retRhoRho; 
+<       LorentzFFAbsBase_t::BBType *g1 , *g2, *g3; 
+---
+>       virtual ~Bm() {}
+>     };
+197c411,415
+<       try
+---
+> 
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+>     template<int lambda_left, int lambda_right> 
+>       ffBase_t<std::complex<double> >::ff_list genList(void)
+199,210c417,439
+<         g1 = new radmat::RhoRhoG1();
+<         g2 = new radmat::RhoRhoG2();
+<         g3 = new radmat::RhoRhoG3();
+< 
+<         // POW2_ASSERT(g1 && g2 && g3);
+<         POW2_ASSERT( g1 );
+<         POW2_ASSERT( g2 );
+<         POW2_ASSERT( g3 );
+< 
+<         retRhoRho.push_back(LorentzFFAbsBase_t::BBHandle_t(g1)); 
+<         retRhoRho.push_back(LorentzFFAbsBase_t::BBHandle_t(g2)); 
+<         retRhoRho.push_back(LorentzFFAbsBase_t::BBHandle_t(g3)); 
+---
+>         ffBase_t<std::complex<double> >::ff_list retCRhoRho; 
+>         ffBase_t<std::complex<double> >::BBType *ap , *bp, *bm; 
+> 
+>         try
+>         {
+>           ap = new radmat::CRhoRho::Ap<lambda_left,lambda_right>();
+>           bp = new radmat::CRhoRho::Bp<lambda_left,lambda_right>();
+>           bm = new radmat::CRhoRho::Bm<lambda_left,lambda_right>();
+> 
+>           // POW2_ASSERT(g1 && g2 && g3);
+>           POW2_ASSERT( ap );
+>           POW2_ASSERT( bp );
+>           POW2_ASSERT( bm );
+>           retCRhoRho.push_back(ffBase_t<std::complex<double> >::BBHandle_t(ap)); 
+>           retCRhoRho.push_back(ffBase_t<std::complex<double> >::BBHandle_t(bp)); 
+>           retCRhoRho.push_back(ffBase_t<std::complex<double> >::BBHandle_t(bm)); 
+>         }
+>         catch(...)
+>         {
+>           POW2_ASSERT(false); 
+>         } 
+> 
+>         return retCRhoRho;
+212,215d440
+<       catch(...)
+<       {
+<         POW2_ASSERT(false); 
+<       } 
+217,218d441
+<       return retRhoRho;
+<     }
+219a443,450
+>     //////////////////////////////////////////////////////////////////
+>     //////////////////////////////////////////////////////////////////
+>     template<int lambda_left, int lambda_right>
+>       struct CRhoRho : public ffBase_t<std::complex<double> >
+>     {
+>       CRhoRho(void)
+>         : ffBase_t<std::complex<double> >(radmat::CRhoRho::genList<lambda_left,lambda_right>())
+>       { }
+220a452,455
+>       CRhoRho& operator=(const CRhoRho &o)
+>       {
+>         if (this != &o)
+>           ffBase_t<std::complex<double> >::operator=(o);
+222,223c457,458
+<   template<int embedl,int embedr> struct RhoRho; 
+<   REGISTER_STRINGIFY_TYPE2( RhoRho<1,1> ); 
+---
+>         return *this; 
+>       }
+224a460,467
+>       CRhoRho(const CRhoRho &o)
+>         : ffBase_t<std::complex<double> >(o)
+>       {  }
+> 
+>       private: 
+>       CRhoRho(const ffBase_t<std::complex<double> >::ff_list &); 
+>       CRhoRho(const ffBase_t<std::complex<double> >::ff_list ); 
+>     };
+226,466c469
+<   //////////////////////////////////////////////////////////////////
+<   //////////////////////////////////////////////////////////////////
+<   template<int embedl, int embedr>
+<     struct RhoRho : public LorentzFFAbsBase_t
+<   {
+<     RhoRho()
+<       : LorentzFFAbsBase_t(radmat::RhoRhoGenList<embedl,embedr>())
+<     { }
+< 
+<     RhoRho& operator=(const RhoRho &o)
+<     {
+<       if (this != &o)
+<         LorentzFFAbsBase_t::operator=(o);
+< 
+<       return *this; 
+<     }
+< 
+<     RhoRho(const RhoRho &o)
+<       : LorentzFFAbsBase_t(o)
+<     {  }
+< 
+<     virtual ~RhoRho() {}
+< 
+<     virtual std::string reg_id() const { return Stringify< RhoRho<embedl,embedr> >(); }
+<     virtual int left_spin() const { return embedl; }
+<     virtual int right_spin() const { return embedr; }
+<     virtual LorentzFFAbsBase_t * clone() const { return new RhoRho(); }
+< 
+<     private: 
+<     RhoRho(const LorentzFFAbsBase_t::LorentzFFAbs_list &); 
+<     RhoRho(const LorentzFFAbsBase_t::LorentzFFAbs_list ); 
+<   };
+< 
+<   //
+<   // MULTIPOLE BASIS
+<   //
+< 
+<   //  //////////////////////////////////////////////////////////////////
+<   //  //////////////////////////////////////////////////////////////////
+<   //
+<   //  struct RhoRhoEtaGen
+<   //  {
+<   //    double operator()(const Tensor<double,1> &l, const Tensor<double,1> &r)
+<   //    {
+<   //      Tensor<double,2 > metric = g_dd(); 
+<   //      Tensor<double,0 > Q2 = contract( l-r, applyMetric(l-r,metric,0) , 0, 0); 
+<   //      Tensor<double,0 > mass = contract(r, applyMetric(l,metric,0) ,0,0); 
+<   //
+<   //      //  Tensor<double,0 > ml = contract(l, applyMetric(l,metric,0) ,0,0); 
+<   //      //  Tensor<double,0 > mr = contract(r, applyMetric(r,metric,0) ,0,0); 
+<   //      //  // average over irrep splitting ( Q^2 / 4 m^2 ) 
+<   //      //  return -Q2.value() / ( 2. *( ml.value() + mr.value() ) );  
+<   //      
+<   //      return -Q2.value() / ( 4. * mass.value() ) ;  
+<   //    }
+<   //  }; 
+<   //
+<   //  //////////////////////////////////////////////////////////////////
+<   //  //////////////////////////////////////////////////////////////////
+<   //
+<   //
+<   //  struct RhoRhoGC; 
+<   //  REGISTER_STRINGIFY_TYPE( RhoRhoGC ); 
+<   //
+<   //  struct RhoRhoGC
+<   //    : public FFAbsBlockBase_t<std::complex<double> >
+<   //  {
+<   //    typedef std::complex<double> Data_t;
+<   //    virtual ~RhoRhoGC() {}
+<   //
+<   //    virtual std::string ff() const {return "";}
+<   //
+<   //    virtual std::string id() const {return Stringify<RhoRhoGC>(); }
+<   //
+<   //    virtual Tensor<Data_t,1> 
+<   //      operator()(const MomRowPair_t &lefty, 
+<   //          const MomRowPair_t &righty, 
+<   //          const double mom_fac) const
+<   //      {
+<   //        RhoRhoEtaGen eg; 
+<   //        double eta = eg(lefty.first,righty.first); 
+<   //        double two_thirds_eta = eta*2./3.;
+<   //
+<   //        std::complex<double> g1coeff = std::complex<double>( 1. + two_thirds_eta, 0.); 
+<   //        std::complex<double> g2coeff = std::complex<double>( -two_thirds_eta, 0.); 
+<   //        std::complex<double> g3coeff = std::complex<double>( two_thirds_eta*( 1. + eta), 0.); 
+<   //
+<   //        RhoRhoG1 G1; 
+<   //        RhoRhoG2 G2; 
+<   //        RhoRhoG3 G3; 
+<   //
+<   //        return g1coeff * G1(lefty,righty,mom_fac) 
+<   //          + g2coeff * G2(lefty,righty,mom_fac)
+<   //          + g3coeff * G3(lefty,righty,mom_fac); 
+<   //      }
+<   //
+<   //  };
+<   //
+<   //
+<   //
+<   //  //////////////////////////////////////////////////////////////////
+<   //  //////////////////////////////////////////////////////////////////
+<   //
+<   //
+<   //  struct RhoRhoGM; 
+<   //  REGISTER_STRINGIFY_TYPE( RhoRhoGM ); 
+<   //
+<   //  struct RhoRhoGM
+<   //    : public FFAbsBlockBase_t<std::complex<double> >
+<   //  {
+<   //    typedef std::complex<double> Data_t;
+<   //    virtual ~RhoRhoGM() {}
+<   //
+<   //    virtual std::string ff() const {return "";}
+<   //
+<   //    virtual std::string id() const {return Stringify<RhoRhoGM>(); }
+<   //
+<   //    virtual Tensor<Data_t,1> 
+<   //      operator()(const MomRowPair_t &lefty, 
+<   //          const MomRowPair_t &righty, 
+<   //          const double mom_fac) const
+<   //      {
+<   //        std::complex<double> g2coeff = std::complex<double>( -1., 0.); 
+<   //
+<   //        RhoRhoG2 G2; 
+<   //
+<   //        return g2coeff * G2(lefty,righty,mom_fac);
+<   //      }
+<   //
+<   //  };
+<   //
+<   //
+<   //  //////////////////////////////////////////////////////////////////
+<   //  //////////////////////////////////////////////////////////////////
+<   //
+<   //
+<   //  struct RhoRhoGQ; 
+<   //  REGISTER_STRINGIFY_TYPE( RhoRhoGQ ); 
+<   //
+<   //  struct RhoRhoGQ
+<   //    : public FFAbsBlockBase_t<std::complex<double> >
+<   //  {
+<   //    typedef std::complex<double> Data_t;
+<   //    virtual ~RhoRhoGQ() {}
+<   //
+<   //    virtual std::string ff() const {return "";}
+<   //
+<   //    virtual std::string id() const {return Stringify<RhoRhoGQ>(); }
+<   //
+<   //    virtual Tensor<Data_t,1> 
+<   //      operator()(const MomRowPair_t &lefty, 
+<   //          const MomRowPair_t &righty, 
+<   //          const double mom_fac) const
+<   //      {
+<   //        RhoRhoEtaGen eg; 
+<   //        double eta = eg(lefty.first,righty.first); 
+<   //
+<   //        std::complex<double> g1coeff = std::complex<double>( 1. , 0.); 
+<   //        std::complex<double> g2coeff = std::complex<double>( -1., 0.); 
+<   //        std::complex<double> g3coeff = std::complex<double>(  1. + eta, 0.); 
+<   //
+<   //        RhoRhoG1 G1; 
+<   //        RhoRhoG2 G2; 
+<   //        RhoRhoG3 G3; 
+<   //
+<   //        return g1coeff * G1(lefty,righty,mom_fac) 
+<   //          + g2coeff * G2(lefty,righty,mom_fac)
+<   //          + g3coeff * G3(lefty,righty,mom_fac); 
+<   //      }
+<   //
+<   //  };
+<   //
+<   //  //////////////////////////////////////////////////////////////////
+<   //  //////////////////////////////////////////////////////////////////
+<   //
+<   //  template<int embedl, int embedr>
+<   //    LorentzFFAbsBase_t::LorentzFFAbs_list RhoRhoGenListMultipole()
+<   //    {
+<   //      LorentzFFAbsBase_t::LorentzFFAbs_list retRhoRho; 
+<   //      LorentzFFAbsBase_t::BBType *gc , *gm, *gq; 
+<   //
+<   //      try
+<   //      {
+<   //        gc = new radmat::RhoRhoGC();
+<   //        gm = new radmat::RhoRhoGM();
+<   //        gq = new radmat::RhoRhoGQ();
+<   //
+<   //        POW2_ASSERT( gc );
+<   //        POW2_ASSERT( gm );
+<   //        POW2_ASSERT( gq );
+<   //
+<   //        retRhoRho.push_back(LorentzFFAbsBase_t::BBHandle_t(gc)); 
+<   //        retRhoRho.push_back(LorentzFFAbsBase_t::BBHandle_t(gm)); 
+<   //        retRhoRho.push_back(LorentzFFAbsBase_t::BBHandle_t(gq)); 
+<   //      }
+<   //      catch(...)
+<   //      {
+<   //        POW2_ASSERT(false); 
+<   //      } 
+<   //
+<   //      return retRhoRho;
+<   //    }
+<   //
+<   //
+<   //
+<   //  template<int embedl,int embedr> struct RhoRhoMultipole; 
+<   //  REGISTER_STRINGIFY_TYPE2( RhoRhoMultipole<1,1> ); 
+<   //
+<   //
+<   //  //////////////////////////////////////////////////////////////////
+<   //  //////////////////////////////////////////////////////////////////
+<   //  template<int embedl, int embedr>
+<   //    struct RhoRhoMultipole : public LorentzFFAbsBase_t
+<   //  {
+<   //    RhoRhoMultipole()
+<   //      : LorentzFFAbsBase_t(radmat::RhoRhoGenListMultipole<embedl,embedr>())
+<   //    { }
+<   //
+<   //    RhoRhoMultipole& operator=(const RhoRhoMultipole &o)
+<   //    {
+<   //      if (this != &o)
+<   //        LorentzFFAbsBase_t::operator=(o);
+<   //
+<   //      return *this; 
+<   //    }
+<   //
+<   //    RhoRhoMultipole(const RhoRhoMultipole &o)
+<   //      : LorentzFFAbsBase_t(o)
+<   //    {  }
+<   //
+<   //    virtual ~RhoRhoMultipole() {}
+<   //
+<   //    virtual std::string reg_id() const { return Stringify< RhoRhoMultipole<embedl,embedr> >(); }
+<   //    virtual int left_spin() const { return embedl; }
+<   //    virtual int right_spin() const { return embedr; }
+<   //    virtual LorentzFFAbsBase_t * clone() const { return new RhoRhoMultipole(); }
+<   //
+<   //    private: 
+<   //    RhoRhoMultipole(const LorentzFFAbsBase_t::LorentzFFAbs_list &); 
+<   //    RhoRhoMultipole(const LorentzFFAbsBase_t::LorentzFFAbs_list ); 
+<   //  };
+---
+>   } // namespace CRhoRho
+467a471
+> #endif 

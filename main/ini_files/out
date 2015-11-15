@@ -1,0 +1,45 @@
+Registering All Factories
+helicity form factors grabbed a J0m
+helicity form factors grabbed a J0p
+helicity form factors grabbed a J1m
+helicity form factors grabbed a J1p
+helicity form factors grabbed a J2m
+helicity form factors grabbed a J2p
+helicity form factors grabbed a J3m
+helicity form factors grabbed a J3p
+helicity form factors grabbed a J4m
+helicity form factors grabbed a J4p
+helicity form factors regged <J0mJ0m_tran>
+helicity form factors regged <J0mJ0m_diag>
+helicity form factors regged <J0mJ1m_tran>
+helicity form factors regged <J0pJ0p_tran>
+helicity form factors regged <J0pJ0p_diag>
+helicity form factors regged <J0pJ1p_tran>
+helicity form factors regged <J1mJ0m_tran>
+helicity form factors regged <J1mJ1m_diag>
+helicity form factors regged <J1pJ0p_tran>
+helicity form factors regged <J1pJ1p_diag>
+kgen_info_printer J1mJ1m_diag
+kgen_info_printer left_row -1
+kgen_info_printer right_row 1
+kgen_info_printer gamma_row 1
+momrp_printer l->p0.216 0 0 0r-1  r->p0.242396 0 0 -0.11r1
+RRG3: lh 1 rh 1
+pl <1>
+[0.216,0,0,0]
+ pr <1>
+[0.242396,0,0,0.11]
+
+momrp_printer l->p0.216 0 0 0r-1  r->p0.242396 0 0 -0.11r1
+RRG3: lh 1 rh 1
+pl <1>
+[0.216,0,0,0]
+ pr <1>
+[0.242396,0,0,0.11]
+
+helicity_printer  - KF 
+[[0.458396+0i 0+0i 0+0i]
+ [0+0i 0+0i 0+0i]
+ [0+0i 0+0i 0+0i]
+ [-0.11+0i 0+0i 0+0i]]
+[0+0i 0+0i 0+0i]

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<props>
+  <tsrc>0</tsrc>
+  <tsnk>28</tsnk>
+  <chisq>none</chisq>
+  <dbfile>state_database.rad</dbfile>
+  <solnID>SVDNonSquare</solnID>
+  <tolerance>1e-6</tolerance>
+  <lat_elems></lat_elems>
+
+  <ffs>
+    <elem>
+      <ff>0</ff>  
+      <threePointComparatorProps>
+        <fit_type>all</fit_type>                        
+        <baseProp>CompareFitsByChisqPerNDoF</baseProp>    
+        <biasProp>none</biasProp>                         
+        <extraProps>                                
+        </extraProps>                                       
+        <tlow>1</tlow>                  
+        <thigh>27</thigh>
+        <minTSlice>20</minTSlice>
+      </threePointComparatorProps>
+    </elem>
+
+    <elem>
+      <ff>1</ff>  
+      <threePointComparatorProps>
+        <fit_type>all</fit_type>                        
+        <baseProp>CompareFitsByChisqPerNDoF</baseProp>    
+        <biasProp>none</biasProp>                         
+        <extraProps>                                
+        </extraProps>                                       
+        <tlow>1</tlow>                  
+        <thigh>27</thigh>
+        <minTSlice>20</minTSlice>
+      </threePointComparatorProps>
+    </elem>
+
+    <elem>
+      <ff>2</ff>  
+      <threePointComparatorProps>
+        <fit_type>all</fit_type>                        
+        <baseProp>CompareFitsByChisqPerNDoF</baseProp>    
+        <biasProp>none</biasProp>                         
+        <extraProps>                                
+        </extraProps>                                       
+        <tlow>1</tlow>                  
+        <thigh>27</thigh>
+        <minTSlice>20</minTSlice>
+      </threePointComparatorProps>
+    </elem>
+  </ffs>
+
+</props>

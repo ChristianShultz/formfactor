@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<FakeDataIni>
+  <version>1</version>
+  <stateProps>
+    <sameOp>true</sameOp>
+    <readZ>true</readZ>
+    <mProps>
+      <sourceMasses>0.18 0.23 0.3 0.4</sourceMasses>
+      <sourceVarO>0.0001</sourceVarO>
+      <sourceUpdateCovariance>true</sourceUpdateCovariance>
+      <sourceUpdateVariance>true</sourceUpdateVariance>
+      <sinkMasses>0.18 0.23 0.3 0.4</sinkMasses>
+      <sinkVarO>0.0001</sinkVarO>
+      <sinkUpdateCovariance>true</sinkUpdateCovariance>
+      <sinkUpdateVariance>true</sinkUpdateVariance>
+    </mProps>
+    <zProps>
+      <overlapGenerator>unitary</overlapGenerator>
+      <suppress>true</suppress>
+      <targetZ_at_order1>true</targetZ_at_order1>
+      <suppressionOrder>0.</suppressionOrder>
+      <updateCovariance>false</updateCovariance>
+      <updateVariance>false</updateVariance>
+      <varianceOrder>0.02</varianceOrder>
+    </zProps>
+    <readZProps>
+      <zsource_r>1. 0.1 0.7 0.1</zsource_r>
+      <zsource_i>0. 0. 0. 0.</zsource_i>
+      <zsink_r>1. 0.1 0.7 0.1</zsink_r>
+      <zsink_i>0. 0. 0. 0.</zsink_i>
+    </readZProps>
+  </stateProps>
+  <matElemProps>
+    <off>PiPiStar</off>
+    <diag>PiPi</diag>
+    <left_target>0</left_target>
+    <right_target>0</right_target>
+  </matElemProps>
+  <timeProps>
+    <tsource>0</tsource>
+    <tsink>25</tsink>
+  </timeProps>
+  <!-- these determine the in flight momenta used-->
+  <dataProps>
+    <ncfg>300</ncfg>
+    <hel_source>0</hel_source>
+    <hel_sink>0</hel_sink>
+    <momenta>     
+    <elem>
+      <momSource>0 0 0</momSource>
+      <momSink>0 0 0</momSink>
+    </elem>
+      <elem>
+        <momSource>1 0 0</momSource>
+        <momSink>0 0 0</momSink>
+      </elem>
+    <elem>
+      <momSource>1 1 0</momSource>
+      <momSink>0 0 0</momSink>
+    </elem>
+    <elem>
+      <momSource>1 1 0</momSource>
+      <momSink>0 0 1</momSink>
+    </elem>
+      <elem>
+        <momSource>2 0 0</momSource>
+        <momSink>0 0 0</momSink>
+      </elem>
+    <elem>
+      <momSource>2 2 0</momSource>
+      <momSink>0 0 0</momSink>
+    </elem>
+    <elem>
+      <momSource>1 1 0</momSource>
+      <momSink>0 0 2</momSink>
+    </elem>
+
+
+    </momenta>
+  </dataProps>
+  <!-- these go into generating the in flight masses via a simple dispersion relation-->
+  <dispersionProps>
+    <a_t_inverse>5.6</a_t_inverse>
+    <xi>3.444</xi>
+    <L_s>2</L_s>
+  </dispersionProps>
+</FakeDataIni>

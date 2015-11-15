@@ -1,0 +1,22 @@
+#ifndef REDSTAR_INTERFACE_H
+#define REDSTAR_INTERFACE_H
+#include "abstract_named_object.h"
+#include "redstar_abstract_xml_factory.h"
+#include "redstar_abstract_xml_interface.h"
+#include "redstar_canonical_lattice_rotations.h"
+#include "redstar_canonical_rotations.h"
+#include "redstar_cartesian_interface.h"
+#include "redstar_improved_vector_current_xml_interface.h"
+#include "redstar_invert_subduction.h"
+#include "redstar_particle_handler_utils.h"
+#include "redstar_photon_polarization_tensor.h"
+#include "redstar_photon_props.h"
+#include "redstar_single_particle_meson_xml_interface.h"
+#include "redstar_three_point_utils.h"
+#include "redstar_three_point_xml_handler.h"
+#include "redstar_three_point_xml_interface.h"
+#include "redstar_three_point_xml_lorentz_handler.h"
+#include "redstar_three_point_xml_mixed_handler.h"
+#include "redstar_three_point_xml_subduce_handler.h"
+#include "redstar_vector_current_xml_interface.h"
+#endif

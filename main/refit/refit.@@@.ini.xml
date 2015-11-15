@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<props>
+
+
+
+  <ffs>
+    <elem>
+      <!-- control the fiting across t_ins -->
+      <ff>PiPiF1</ff>
+
+      <threePointComparatorProps>
+        <fit_type>symExpPC</fit_type>                        <!-- more options in jackfitter, threepoint_something.h -->
+        <baseProp>CompareFitsByChisqPerNDoF</baseProp>    <!-- basic fit comparator -->
+        <biasProp>none</biasProp>                         <!-- add some bias function to the comparator as a function of fit range (try to bias toward middle?) -->
+        <extraProps>                                      <!-- multiply extra bits on the comparator - ie smaller errors on the constant etc -->
+        </extraProps>                                       
+        <tlow>1</tlow>                                    <!-- fit range, should be less than or equal to correlator length --> 
+        <thigh>11</thigh>
+        <minTSlice>5</minTSlice>
+      </threePointComparatorProps>
+
+    </elem>
+  </ffs>
+
+  <tsrc>0</tsrc>
+  <tsnk>12</tsnk>
+  <chisq>none</chisq>
+  <dbfile>ff_database.rad</dbfile>
+  <solnID>SVDNonSquare</solnID>
+  <tolerance>1e-6</tolerance>
+  <lat_elems>@@@@</lat_elems>
+
+</props>

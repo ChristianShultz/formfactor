@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<Params>
+  <mass_file>/Users/shultz/jlab/database/szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per/meson_2pt/redstar/isovector/analysis/shultz</mass_file>
+  <overlap_file>/Users/shultz/jlab/database/szscl3_16_128_b1p50_t_x4p300_um0p0743_n1p265_per/meson_2pt/redstar/isovector/analysis/shultz/</overlap_file>
+  <ncfg>535</ncfg>
+  <resize>false</resize>
+  <isProjected>true</isProjected>
+  <phase_real>1.</phase_real>
+  <phase_imag>0.</phase_imag>  <!-- this should always be zero.. -->
+  <Z_type>2E</Z_type>
+  <pid>rho</pid>
+  <LG>true</LG>
+  <redstar>
+    <CGs>
+    </CGs>
+    <Operators>
+      <elem>
+        <name>pion_proj0_p000_A1</name>
+        <smear></smear>
+        <mom_type>0 0 0</mom_type>
+      </elem>
+    </Operators>
+    <creation_op>false</creation_op>
+    <smearedP>true</smearedP>
+    <mom>0 0 0</mom>
+    <row>1</row>
+    <twoI_z>2</twoI_z>
+  </redstar>
+</Params>

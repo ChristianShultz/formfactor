@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<Props>
+
+
+  <!-- control the fiting across t_ins -->
+
+  <threePointComparatorProps>
+    <!-- more options in jackfitter, threepoint_something.h -->
+    <fit_type>const</fit_type>   
+
+    <!-- basic fit comparator -->
+    <baseProp>CompareFitsByChisqPerNDoF</baseProp>
+
+    <!-- add some bias function to the comparator as 
+         a function of fit range (try to bias toward middle?) -->
+    <biasProp>none</biasProp>     
+
+    <!-- multiply extra bits on the comparator 
+         ie smaller errors on the constant etc -->
+    <extraProps>         
+    </extraProps>                                       
+
+    <!-- fit range, should be less than 
+         or equal to correlator length --> 
+    <tlow>0</tlow>       
+    <thigh>28</thigh>
+
+    <!-- minimum number of timeslices for a fit -->
+    <minTSlice>7</minTSlice>
+  </threePointComparatorProps>
+
+  <chisq>none</chisq>
+  <dbfile>state_database.rad</dbfile>
+  <solnID>SVDNonSquare</solnID>
+  <lat_elems>0 1 2 3 4</lat_elems>
+
+</Props>
